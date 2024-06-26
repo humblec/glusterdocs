@@ -9,27 +9,37 @@ such as compat-readline5
 
 Packages are provided according to this [table](./Community-Packages.md).
 
-###### For Debian
-
-Download the GPG key to apt config directory:
+###### For Debian with modern apt
 
 ```console
-wget -O - https://download.gluster.org/pub/gluster/glusterfs/9/rsa.pub | gpg --dearmor > /etc/apt/trusted.gpg.d/gluster.gpg
-```
+GLUSTER_VER=11
+KEYRING_PATH=/etc/apt/keyrings/gluster.asc
+wget -O "$KEYRING_PATH" https://download.gluster.org/pub/gluster/glusterfs/${GLUSTER_VER}/rsa.pub
 
-If the rsa.pub is not available at the above location, please look here https://download.gluster.org/pub/gluster/glusterfs/7/rsa.pub and add the GPG key to apt:
-
-```console
-wget -O - https://download.gluster.org/pub/gluster/glusterfs/7/rsa.pub | gpg --dearmor > /etc/apt/trusted.gpg.d/gluster.gpg
-```
-
-Add the source:
-
-```console
 DEBID=$(grep 'VERSION_ID=' /etc/os-release | cut -d '=' -f 2 | tr -d '"')
 DEBVER=$(grep 'VERSION=' /etc/os-release | grep -Eo '[a-z]+')
 DEBARCH=$(dpkg --print-architecture)
-echo "deb [signed-by=/etc/apt/trusted.gpg.d/gluster.gpg] https://download.gluster.org/pub/gluster/glusterfs/LATEST/Debian/${DEBID}/${DEBARCH}/apt ${DEBVER} main" > /etc/apt/sources.list.d/gluster.list
+echo "deb [signed-by=${KEYRING_PATH}] https://download.gluster.org/pub/gluster/glusterfs/${GLUSTER_VER}/LATEST/Debian/${DEBID}/${DEBARCH}/apt ${DEBVER} main" > /etc/apt/sources.list.d/gluster.list
+```
+
+Update package list and install the server:
+
+```console
+apt update
+apt install glusterfs-server
+```
+
+##### For Debian with an older apt (pre 2.4)
+
+```console
+KEYRING_PATH=/etc/apt/trusted.gpg.d/gluster.gpg
+GLUSTER_VER=7
+wget -O - https://download.gluster.org/pub/gluster/glusterfs/${GLUSTER_VER}/rsa.pub | gpg --dearmor > "$KEYRING_PATH"
+
+DEBID=$(grep 'VERSION_ID=' /etc/os-release | cut -d '=' -f 2 | tr -d '"')
+DEBVER=$(grep 'VERSION=' /etc/os-release | grep -Eo '[a-z]+')
+DEBARCH=$(dpkg --print-architecture)
+echo "deb [signed-by=/etc/apt/trusted.gpg.d/gluster.gpg] https://download.gluster.org/pub/gluster/glusterfs/${GLUSTER_VER}/LATEST/Debian/${DEBID}/${DEBARCH}/apt ${DEBVER} main" > /etc/apt/sources.list.d/gluster.list
 ```
 
 Update package list:
@@ -55,7 +65,7 @@ apt install software-properties-common
 Then add the community GlusterFS PPA:
 
 ```console
-add-apt-repository ppa:gluster/glusterfs-7
+add-apt-repository ppa:gluster/glusterfs-11
 apt update
 ```
 
@@ -65,8 +75,10 @@ Finally, install the packages:
 apt install glusterfs-server
 ```
 
-_Note: Packages exist for Ubuntu 16.04 LTS, 18.04
-LTS, 20.04 LTS, 20.10, 21.04_
+_Note: GlusterFS 11 Packages exist for Ubuntu LTS Releases
+24.04, 22.04, 20.04, 18.04, as well as the interim releases
+23.04 and 23.10. Packages for earlier versions will cover
+different Ubuntu releases._
 
 ###### For Red Hat/CentOS
 
