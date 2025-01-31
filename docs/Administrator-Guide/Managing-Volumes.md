@@ -484,7 +484,7 @@ In replicate module, previously you had to manually trigger a self-heal
 when a brick goes offline and comes back online, to bring all the
 replicas in sync. Now the pro-active self-heal daemon runs in the
 background, diagnoses issues and automatically initiates self-healing
-every 10 minutes on the files which requires*healing*.
+every 10 minutes on the files which requires _healing_.
 
 You can view the list of files that need _healing_, the list of files
 which are currently/previously _healed_, list of files which are in
